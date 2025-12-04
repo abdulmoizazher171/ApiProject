@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using MyApiProject.Services;
+using Microsoft.EntityFrameworkCore;
+using MyApiProject.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -56,6 +58,16 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = "RefreshTokens_";
 });
 
+
+
+
+builder.Services.AddDbContext<ApplicationDbContext>(options => // <--- FIXED
+{
+    // Use the connection string defined in appsettings.json
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
