@@ -1,4 +1,5 @@
 namespace MyApiProject.Services;
+
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
 using MyApiProject.contracts;
@@ -6,28 +7,49 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using MyApiProject;
-
-
+using MyApiProject.Models;
+using MyApiProject.Data;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
+using MyApiProject.Helpers;
 
 public class LoginService : ILogininterface
 {
     private readonly IConfiguration _configuration;
 
-    private readonly IDistributedCache _cache;
-    private readonly int _tokenExpiryMinutes = 10080; // 7 days
+    private readonly ApplicationDbContext _context;
+    // 7 days
 
-    public LoginService(IConfiguration configuration, IDistributedCache cache)
+    public LoginService(IConfiguration configuration, ApplicationDbContext context)
     {
         _configuration = configuration;
 
-        _cache = cache;
+        _context = context;
 
     }
 
-    public AuthResponse Authenticate(LoginModel loginModel)
+    public async Task<AuthResponse?> Authenticate(LoginModel loginModel)
     {
         // For demonstration, using hardcoded username and password
-        if (loginModel.Username == "testuser" && loginModel.Password == "password123")
+
+        var expectedUser = await _context.Users
+        .Where(u => u.Username == loginModel.Username)
+        .FirstOrDefaultAsync();
+
+        if (expectedUser == null)
+        {
+            return null; // User not found
+        }
+
+        bool isPasswordValid = PasswordHasher.VerifyPassword(
+            loginModel.Password,
+            expectedUser.PasswordHash // Assuming your model has this hash
+        );
+
+        if (isPasswordValid)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = System.Text.Encoding.ASCII.GetBytes(_configuration["JwtSettings:key"] ?? throw new InvalidOperationException("JwtSettings:key is not configured"));
@@ -45,13 +67,14 @@ public class LoginService : ILogininterface
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return new AuthResponse
+
             {
-                Token = tokenHandler.WriteToken(token),
-                Expiration = tokenDescriptor.Expires ?? DateTime.UtcNow.AddHours(1)
+                Token = tokenHandler.WriteToken(token)
+
             };
         }
 
-        throw new UnauthorizedAccessException("Invalid username or password.");
+        return null;
     }
 
 
@@ -66,68 +89,46 @@ public class LoginService : ILogininterface
         return Convert.ToBase64String(randomNumber);
     }
 
-    public RefreshToken CreateRefreshToken(string userId)
+
+    public async Task<RefreshToken> SaveRefreshTokenAsync(int userId, string tokenValue)
     {
-
-
-
-        return new RefreshToken
+        var newToken = new RefreshToken
         {
-            Token = GenerateRandomToken(),
-            UserId = userId,
-            Created = DateTime.UtcNow,
-            // Set a long expiry, e.g., 7 days (10080 minutes)
-            Expires = DateTime.UtcNow.AddMinutes(10080)
+            // 1. Set the scalar Foreign Key property
+            UserID = userId, // This links the token to the existing User
+
+            Token = tokenValue,
+            Expires = DateTime.UtcNow.AddDays(7),
+            Revoked = null
         };
-    }
-    public async Task AddTokenAsync(RefreshToken token)
-    {
-        // Use a unique key, often combining the user ID and the token itself
-        var cacheKey = GetCacheKey(token.Token); 
-        var tokenJson = JsonSerializer.Serialize(token);
-        
-        var options = new DistributedCacheEntryOptions()
-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(_tokenExpiryMinutes));
 
-        // Set the token in the cache with its defined expiry
-        await _cache.SetStringAsync(cacheKey, tokenJson, options);
-    }
+        // Step 1: Track the new token
+        _context.RefreshTokens.Add(newToken);
 
+        // Step 2: Commit the changes (SQL INSERT)
+        await _context.SaveChangesAsync();
+
+        return newToken;
+    }
     // 2. Get (Validate) the Refresh Token
-    public async Task<RefreshToken?> GetActiveTokenAsync(string tokenString)
+
+
+
+    public async Task<bool?> ValidateRefreshtokenAsync(int userid, string refreshtoken)
     {
-        var cacheKey = GetCacheKey(tokenString);
-        var tokenJson = await _cache.GetStringAsync(cacheKey);
+        var token = await _context.RefreshTokens.Where(rt => rt.UserID == userid).Select(rt => rt.Token).FirstOrDefaultAsync(); ;
 
-        if (string.IsNullOrEmpty(tokenJson))
-            return null;
-
-        var token = JsonSerializer.Deserialize<RefreshToken>(tokenJson);
-        
-        // Ensure token is not manually revoked or expired (though cache expiry handles most of this)
-        if (token is { IsActive: true })
+        if (refreshtoken == token)
         {
-            return token;
+            return true;
         }
 
-        return null;
+        else
+        {
+            return false;
+        }
     }
 
-    public async Task<RefreshToken?> ValidateRefreshTokenAsync(string tokenString)
-    {
-        var token = await GetActiveTokenAsync(tokenString);
-        return token;
-    }
-
-    // 3. Revoke/Remove the Refresh Token
-    public async Task RevokeTokenAsync(string tokenString)
-    {
-        var cacheKey = GetCacheKey(tokenString);
-        await _cache.RemoveAsync(cacheKey);
-    }
-    
-    // --- Helper ---
-    private static string GetCacheKey(string tokenString) => $"refresh_token:{tokenString}";
 }
 
 

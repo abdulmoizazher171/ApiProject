@@ -1,6 +1,7 @@
 // User.cs
-namespace MyApiProject.Models // <-- This is the namespace you need to reference
-{
+namespace MyApiProject.Models;
+using System.Collections.Generic; // <-- This is the namespace you need to reference
+
     public class User 
     { 
         public int UserId { get; set; }
@@ -19,7 +20,9 @@ namespace MyApiProject.Models // <-- This is the namespace you need to reference
 
         public DateTime? LastLoginDate { get; set; } = DateTime.UtcNow;
 
-       
-    }
-
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>(); 
 }
+
+
+    
+

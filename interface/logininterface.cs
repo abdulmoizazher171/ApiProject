@@ -1,16 +1,18 @@
 using MyApiProject.Services;
 using MyApiProject.contracts;
+using MyApiProject.Models;
+
 
 public interface ILogininterface
 {
-    public AuthResponse Authenticate(LoginModel loginModel);
+    public Task<AuthResponse?> Authenticate(LoginModel loginModel);
 
     
 
-    public RefreshToken CreateRefreshToken(string userId);
+    public  Task<RefreshToken> SaveRefreshTokenAsync(int userId, string tokenValue);
 
 
-    public  Task AddTokenAsync(RefreshToken token);
+   public Task<bool?> ValidateRefreshtokenAsync(int userid, string refreshtoken);
 
-    public Task<RefreshToken?> ValidateRefreshTokenAsync(string tokenString);
+    
 }

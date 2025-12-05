@@ -26,14 +26,12 @@ public class Authcontroller : ControllerBase
         {
             Console.WriteLine("Login attempt for user: " + loginModel.Username);
             var authResponse = _loginService.Authenticate(loginModel);
-            var refreshToken = _loginService.CreateRefreshToken(loginModel.Username ?? string.Empty);
-            Response.Cookies.Append("refreshToken", refreshToken.Token, new CookieOptions
+           
+           if (authResponse == null)
             {
-                HttpOnly = true, // Prevent client-side JS access
-                Secure = true,   // Only transmit over HTTPS
-                Expires = refreshToken.Expires
-            });
-            _loginService.AddTokenAsync(refreshToken);
+                return Unauthorized(new { message = "Invalid credentials." });
+            }
+            
 
             return Ok(authResponse);
         }
@@ -44,32 +42,14 @@ public class Authcontroller : ControllerBase
     }
 
 
-    [HttpPost("refresh")]
-    public async Task<IActionResult> RefreshToken()
-    {
-        // 1. Try to read the Refresh Token from the HTTP-only cookie
-        var refreshTokenString = Request.Cookies["refreshToken"];
+    
+    
+        
 
-        if (string.IsNullOrEmpty(refreshTokenString))
-        {
-            return Unauthorized("Refresh token missing.");
-        }
-
-        if (await _loginService.ValidateRefreshTokenAsync(refreshTokenString) is not RefreshToken storedToken)
-        {
-            return Unauthorized("Invalid or expired refresh token.");
-        }
-
-        else
-        {
-            // 2. Generate a new JWT
-            var loginModel = new LoginModel { Username = storedToken.UserId, Password = storedToken.UserId };
-            var newAuthResponse = _loginService.Authenticate(loginModel);
-            return Ok(newAuthResponse);
-        }
+        
 
 
-    }
+    
 
 
 
