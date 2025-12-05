@@ -39,7 +39,7 @@ public class Authcontroller : ControllerBase
         }
         catch (UnauthorizedAccessException ex)
         {
-            return Unauthorized(new { message = "HI" });
+            return Unauthorized(new { ex.Message });
         }
     }
 

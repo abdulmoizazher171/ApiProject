@@ -18,7 +18,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IActionsinterface, Actions>();
 builder.Services.AddScoped<ILogininterface, LoginService>();
-
+builder.Services.AddScoped<IUserService, UserService>();
 
 var jwtSettings = configuration.GetSection("JwtSettings");
 Console.WriteLine(jwtSettings);
@@ -64,7 +64,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options => // <--- FIXED
 {
     // Use the connection string defined in appsettings.json
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
 
 builder.Services.AddEndpointsApiExplorer();
