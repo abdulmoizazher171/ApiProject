@@ -1,4 +1,4 @@
-namespace MyApiProject.controllers;
+namespace MyApiProject.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
 using MyApiProject.contracts;
