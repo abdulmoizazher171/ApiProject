@@ -8,6 +8,11 @@ namespace MyApiProject.Models
         
         public string PaymentType { get; set; } = string.Empty;
 
+        public int CustomerId {get; set;}
+
+        public Customer Customer { get; set; } = null!;
+        
+
         
     }
 

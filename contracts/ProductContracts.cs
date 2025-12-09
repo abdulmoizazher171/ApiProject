@@ -19,6 +19,6 @@ namespace MyApiProject.contracts
         [Required]
         public string Price { get; set; } = string.Empty; // Validation for numeric format needed
         
-        public string PictureUrl { get; set; } = string.Empty;
+        public string Picture { get; set; } = string.Empty;
     }
 }

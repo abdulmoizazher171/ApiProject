@@ -17,7 +17,7 @@ namespace MyApiProject.Models
         public string Price { get; set; } = string.Empty;
         
         // NOTE: Typo corrected from 'pricture' to 'PictureUrl' for clarity
-        public string PictureUrl { get; set; } = string.Empty;
+        public string Picture { get; set; } = string.Empty;
 
         // Navigation Property: Defines the 1-to-many relationship
         // A Product belongs to one Category.

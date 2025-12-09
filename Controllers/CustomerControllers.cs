@@ -7,20 +7,20 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("customer")]
-public class Customercontroller : ControllerBase
+public class CustomerController : ControllerBase
 {
 
     private readonly  ICustomerInterface _CustomerService;
 
     
 
-    public Customercontroller(ICustomerInterface customerInterface)
+    public CustomerController(ICustomerInterface customerInterface)
     {
         _CustomerService = customerInterface;  
         
         
     }
-    [HttpPost]
+    [HttpPost("create")]
     public async Task<IActionResult> Create ([FromBody] CustomerCreateDto dto)
 
     {
@@ -38,6 +38,17 @@ public class Customercontroller : ControllerBase
         return Ok(customer);
         
     }
+
+
+    [HttpPost("Pay")]
+
+    public async Task<Payment> pay ([FromBody] PaymentDto paymentDto )
+    {
+        var result = await _CustomerService.pay(paymentDto);
+        return result;
+
+    }
+
 
 
 }

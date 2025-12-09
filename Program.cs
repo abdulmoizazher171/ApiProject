@@ -5,6 +5,7 @@ using System.Text;
 using MyApiProject.Services;
 using Microsoft.EntityFrameworkCore;
 using MyApiProject.Data;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -20,6 +21,7 @@ builder.Services.AddScoped<IActionsinterface, Actions>();
 builder.Services.AddScoped<ILogininterface, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICustomerInterface, CustomerSevice>();
+builder.Services.AddScoped<IOrderInterface, OrderService>();
  
 
 var jwtSettings = configuration.GetSection("JwtSettings");
@@ -35,7 +37,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = "JwtBearer";
 }).AddJwtBearer("JwtBearer", options =>
 {
-    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
@@ -43,13 +45,21 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = issuer,
         ValidAudience = audience,
-        IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secretKey)),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
         ClockSkew = TimeSpan.FromMinutes(5)
     };
 });
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // THIS LINE prevents the infinite loop/stack overflow when serializing.
+        // It tells the serializer to ignore the back-references (the cycles).
+        options.JsonSerializerOptions.ReferenceHandler =
+            ReferenceHandler.IgnoreCycles;
+    });
 
 builder.Services.AddDistributedMemoryCache();
 // OR, for Production (Redis Cache)

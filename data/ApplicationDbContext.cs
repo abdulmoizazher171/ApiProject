@@ -16,9 +16,9 @@ public class ApplicationDbContext : DbContext
     // public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<RefreshToken> RefreshTokens {get; set;}
 
-    public DbSet<Product> Products {get; set;}
+    public DbSet<Product> Product {get; set;}
 
-    public DbSet<Payment> Payments {get; set;}
+    public DbSet<Payment> Payment {get; set;}
 
 
     public DbSet<Customer> Customer {get; set;}
@@ -36,7 +36,12 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<User>()
         .HasKey(user => user.UserId);
         
-        
+         modelBuilder.Entity<Payment>()
+        .HasOne(p => p.Customer)           // A Payment has one Customer
+        .WithMany()                         // CORRECT: Tells EF Core this is the 'many' side, with no inverse collection
+        .HasForeignKey(p => p.CustomerId)  // CORRECT: Standard HasForeignKey call without generic argument
+        .OnDelete(DeleteBehavior.NoAction); // Matches the 'ON DELETE NO ACTION' constraint you added in SQL
+
        
 
 
@@ -83,8 +88,7 @@ public class ApplicationDbContext : DbContext
           
 
             // 5. PictureUrl Configuration
-            entity.Property(p => p.PictureUrl)
-                  .HasColumnName("PictureUrl"); // Ensure correct column name if needed
+             // Ensure correct column name if needed
                   
             // NOTE: Description can be left alone if nullable and max length 225 is sufficient.
         });

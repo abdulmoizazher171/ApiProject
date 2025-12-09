@@ -7,7 +7,7 @@ public  interface ICustomerInterface
 
      public Task<Customer> addcustomer ( CustomerCreateDto dto);
 
-    
+    public  Task<Payment> pay ( PaymentDto paymentDto );
 
     }
 
