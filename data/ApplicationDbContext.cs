@@ -21,7 +21,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Payment> Payments {get; set;}
 
 
-    public DbSet<Customer> Customers {get; set;}
+    public DbSet<Customer> Customer {get; set;}
 
     public DbSet<Category> Category  {get; set;}
 
@@ -32,8 +32,12 @@ public class ApplicationDbContext : DbContext
         // ------------------------------------------------------------------
         // RefreshToken to User Relationship Configuration
         // ------------------------------------------------------------------
-        modelBuilder.Entity<RefreshToken>().
-        HasKey(refreshtoken => refreshtoken.TokenID);
+        
+        modelBuilder.Entity<User>()
+        .HasKey(user => user.UserId);
+        
+        
+       
 
 
      modelBuilder.Entity<RefreshToken>().
@@ -76,8 +80,7 @@ public class ApplicationDbContext : DbContext
                   
             // 4. Data Type Configuration (Recommended fix for Price)
             // It is strongly recommended to store monetary values as a decimal.
-            entity.Property(p => p.Price)
-                  .HasColumnType("decimal(18, 2)"); 
+          
 
             // 5. PictureUrl Configuration
             entity.Property(p => p.PictureUrl)

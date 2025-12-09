@@ -1,21 +1,21 @@
-namespace MyApiProject.Services;
 
-using Microsoft.Extensions.Caching.Distributed;
-using System.Text.Json;
-using MyApiProject.contracts;
-using Microsoft.IdentityModel.Tokens;
+
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using MyApiProject;
-using MyApiProject.Models;
-using MyApiProject.Data;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.IdentityModel.Tokens;
+using MyApiProject;
+using MyApiProject.contracts;
+using MyApiProject.Data;
 using MyApiProject.Helpers;
-
+using MyApiProject.Models;
+namespace MyApiProject.Services;
 public class LoginService : ILogininterface
 {
     private readonly IConfiguration _configuration;

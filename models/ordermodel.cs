@@ -16,12 +16,12 @@ namespace MyApiProject.Models
         // Navigation Properties (Define the relationships)
         
         // A single Order is associated with one Product
-        public virtual Product? Product { get; set; } 
+        public Product? Product { get; set; } 
 
         // A single Order is placed by one Customer
-        public virtual Customer? Customer { get; set; }
+        public  Customer? Customer { get; set; }
 
         // A single Order uses one Payment method
-        public virtual Payment? Payment { get; set; }
+        public  Payment? Payment { get; set; }
     }
 }

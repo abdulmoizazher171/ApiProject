@@ -21,6 +21,6 @@ namespace MyApiProject.Models
 
         // Navigation Property: Defines the 1-to-many relationship
         // A Product belongs to one Category.
-        public virtual Category? Category { get; set; } 
+        public Category? Category { get; set; } 
     }
 }

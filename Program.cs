@@ -19,6 +19,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<IActionsinterface, Actions>();
 builder.Services.AddScoped<ILogininterface, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICustomerInterface, CustomerSevice>();
+ 
 
 var jwtSettings = configuration.GetSection("JwtSettings");
 Console.WriteLine(jwtSettings);

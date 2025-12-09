@@ -19,7 +19,9 @@ public class Customer
 
     public string CreditCard {get; set;} = string.Empty;
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    
+
+    public  ICollection<Order> Orders { get; set; } = new List<Order>();
 
 }
 }
