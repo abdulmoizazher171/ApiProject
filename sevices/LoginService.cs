@@ -15,6 +15,7 @@ using MyApiProject.contracts;
 using MyApiProject.Data;
 using MyApiProject.Helpers;
 using MyApiProject.Models;
+using StackExchange.Redis;
 namespace MyApiProject.Services;
 public class LoginService : ILogininterface
 {
@@ -31,13 +32,15 @@ public class LoginService : ILogininterface
 
     }
 
-    public async Task<AuthResponse?> Authenticate(LoginModel loginModel)
+    DateTime currentDateTime = DateTime.Now;
+    public async Task<RefreshToken?> Authenticate(LoginModel loginModel)
     {
         // For demonstration, using hardcoded username and password
 
         var expectedUser = await _context.Users
         .Where(u => u.Username == loginModel.Username)
         .FirstOrDefaultAsync();
+
 
         if (expectedUser == null)
         {
@@ -48,6 +51,18 @@ public class LoginService : ILogininterface
             loginModel.Password,
             expectedUser.PasswordHash // Assuming your model has this hash
         );
+
+        if (isPasswordValid)
+        {
+           var refreshtoken = _context.RefreshTokens.Where(r=> r.UserID == expectedUser.UserId).FirstOrDefault();
+            if (refreshtoken.Expires > currentDateTime)
+            {
+                bool refeshtokenisvalid = false;
+                Console.WriteLine("this is working");
+                return    refreshtoken;     
+                
+            }
+        }
 
         if (isPasswordValid)
         {
@@ -66,12 +81,22 @@ public class LoginService : ILogininterface
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return new AuthResponse
-
+            ;
+            
+            DateTime expiry = currentDateTime.AddDays(7);
+            var newtoken = new RefreshToken
             {
-                Token = tokenHandler.WriteToken(token)
-
+                Token = tokenHandler.WriteToken(token),
+                Expires = expiry,
+                UserID = expectedUser.UserId
+                
+                
             };
+
+            _context.RefreshTokens.Add(newtoken);
+            await _context.SaveChangesAsync();
+
+            return  newtoken;
         }
 
         return null;

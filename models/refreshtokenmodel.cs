@@ -17,8 +17,7 @@ public class RefreshToken
     // Use the [ForeignKey] attribute on the navigation property (User)
     // to point it to the scalar property (UserRefId).
     
-    public User User { get; set; } = null!; // null! ensures the compiler knows it will be initialized by EF Core
-
+    
     
     public DateTime Expires { get; set; }
     public DateTime? Revoked { get; set; }

@@ -21,4 +21,28 @@ namespace MyApiProject.contracts
         
         public string Picture { get; set; } = string.Empty;
     }
+
+
+    public class ProductUpdateDto
+    {
+        // ProductId is only included if this DTO is used for updating
+        public int? ProductId { get; set; } 
+        
+        [Required]
+        [MaxLength(225)]
+        public string ProductName { get; set; } = string.Empty;
+        
+        [MaxLength(2000)]
+        public string Description { get; set; } = string.Empty;
+
+        [Required]
+        public int CategoryId { get; set; } 
+        
+        [Required]
+        public string Price { get; set; } = string.Empty; 
+        
+        public string Picture { get; set; } = string.Empty;
+    }
+
+
 }

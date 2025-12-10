@@ -48,18 +48,18 @@ public class ApplicationDbContext : DbContext
      modelBuilder.Entity<RefreshToken>().
         HasKey(refreshtoken => refreshtoken.TokenID);
 
-        modelBuilder.Entity<RefreshToken>()
-            // 1. Start from the dependent entity (RefreshToken) and map its reference
-            .HasOne(refreshToken => refreshToken.User) 
+        // modelBuilder.Entity<RefreshToken>()
+        //     // 1. Start from the dependent entity (RefreshToken) and map its reference
+        //     .HasOne(refreshToken => refreshToken.User) 
             
-            // 2. Map back to the principal entity (User) and its collection
-            .WithMany(user => user.RefreshTokens) 
+        //     // 2. Map back to the principal entity (User) and its collection
+        //     .WithMany(user => user.RefreshTokens) 
             
-            // 3. Explicitly state which property in the RefreshToken table is the foreign key
-            .HasForeignKey(refreshToken => refreshToken.UserID) 
+        //     // 3. Explicitly state which property in the RefreshToken table is the foreign key
+        //     .HasForeignKey(refreshToken => refreshToken.UserID) 
             
-            // 4. Define deletion behavior: If a User is deleted, delete all their tokens
-            .OnDelete(DeleteBehavior.Cascade); 
+        //     // 4. Define deletion behavior: If a User is deleted, delete all their tokens
+        //     .OnDelete(DeleteBehavior.Cascade); 
 
         // ------------------------------------------------------------------
         

@@ -5,7 +5,7 @@ using MyApiProject.Models;
 
 public interface ILogininterface
 {
-    public Task<AuthResponse?> Authenticate(LoginModel loginModel);
+    public Task<RefreshToken?> Authenticate(LoginModel loginModel);
 
     
 

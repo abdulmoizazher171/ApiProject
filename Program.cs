@@ -22,7 +22,7 @@ builder.Services.AddScoped<ILogininterface, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICustomerInterface, CustomerSevice>();
 builder.Services.AddScoped<IOrderInterface, OrderService>();
- 
+builder.Services.AddScoped<IProductService,ProductService>();
 
 var jwtSettings = configuration.GetSection("JwtSettings");
 Console.WriteLine(jwtSettings);
