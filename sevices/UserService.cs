@@ -1,7 +1,9 @@
 namespace MyApiProject.Services;
 using Microsoft.EntityFrameworkCore;
+using MyApiProject.contracts;
 using MyApiProject.Data;
 using MyApiProject.Models;
+using MyApiProject.Helpers;
 
 class UserService : IUserService
 {
@@ -13,16 +15,28 @@ class UserService : IUserService
         _context = context;
         
     }
-    private readonly List<User> _users = new List<User>();
+    //private readonly List<User> _users = new List<User>();
 
     
     public async Task<List<User>> GetAllUsersAsync()
     {
         return await _context.Users.ToListAsync();
     }
-    public void CreateUser(User user)
+
+    public async Task<User> CreateUser(UserDto user)
     {
-        _users.Add(user);
+       var newuser = new User
+       {
+           Username = user.Username,
+           Email = user.Email,
+           PasswordHash =  PasswordHasher.HashPassword(user.Password)
+           
+       };
+
+       _context.Users.Add(newuser);
+       await _context.SaveChangesAsync();
+
+       return newuser;
     }
 }
 

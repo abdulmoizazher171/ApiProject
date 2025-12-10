@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 
 using Microsoft.IdentityModel.Tokens;
+using MyApiProject.contracts;
 
 [ApiController]
 [Route("user")]
@@ -27,5 +28,13 @@ public class UserController : ControllerBase
             return NotFound("No users found.");
         }
         return Ok(users);
+    }
+
+    [HttpPost("create")]
+
+    public async Task<IActionResult> create(UserDto user)
+    {
+                var u = await _userService.CreateUser(user);
+                return Ok(u);
     }
 }

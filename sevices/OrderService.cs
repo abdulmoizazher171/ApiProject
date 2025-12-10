@@ -66,11 +66,13 @@ class OrderService : IOrderInterface
             .Include(o => o.Product)
                 // Product -> Category (Deep Load)
                 .ThenInclude(p => p.Category)
+                // .ThenInclude(c=>c.CategoryName.Contains("abc"))
             // Order -> Customer
             .Include(o => o.Customer)
             // Order -> Payment
             .Include(o => o.Payment)
             .FirstOrDefaultAsync();
+
 
         if (fullOrder == null)
         {

@@ -5,6 +5,7 @@ using MyApiProject.contracts;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using MyApiProject.Services;
+using System.Threading.Tasks;
 
 [ApiController]
 [Route("login")]
@@ -20,12 +21,12 @@ public class Authcontroller : ControllerBase
 
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginModel loginModel)
+    public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
     {
         try
         {
             Console.WriteLine("Login attempt for user: " + loginModel.Username);
-            var authResponse = _loginService.Authenticate(loginModel);
+            var authResponse = await  _loginService.Authenticate(loginModel);
            
            if (authResponse == null)
             {
