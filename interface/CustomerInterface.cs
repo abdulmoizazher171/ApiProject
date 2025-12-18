@@ -9,6 +9,8 @@ public  interface ICustomerInterface
 
     public  Task<Payment> pay ( PaymentDto paymentDto );
 
+    public Task<List<Customer>> getall ();
+
     }
 
 

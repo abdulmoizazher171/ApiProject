@@ -48,7 +48,12 @@ public class CustomerController : ControllerBase
         return result;
 
     }
-
+    
+     [HttpGet("all")]
+    public async Task<List<Customer>> getll()
+    {
+        return await _CustomerService.getall();
+    }
 
 
 }

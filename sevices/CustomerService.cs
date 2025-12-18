@@ -89,4 +89,10 @@ public class CustomerSevice : ICustomerInterface
 
             return fullPayment;
         }
+
+         public async Task<List<Customer>> getall()
+    {
+        return await _context.Customer.ToListAsync();
+
+    }
 }
