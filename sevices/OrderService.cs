@@ -86,8 +86,15 @@ class OrderService : IOrderInterface
 
     public async Task<List<Order>> GetAllOrdersAsync()
     {
-        return await _context.Orders.ToListAsync();
-
+        List<Order> orders = new List<Order>();
+        await _context.Orders.ToListAsync();
+        return await _context.Orders
+        .Include(o => o.Product)           // Loads Product for each Order
+             // Loads Category for each Product (Deep Load)
+        .Include(o => o.Customer)          // Loads Customer for each Order
+        .Include(o => o.Payment)           // Loads Payment for each Order
+        .ToListAsync();
+       
     }
 }
 
