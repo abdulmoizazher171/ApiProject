@@ -7,10 +7,22 @@ using Microsoft.EntityFrameworkCore;
 using MyApiProject.Data;
 using System.Text.Json.Serialization;
 
+
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 // Add services to the container.
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()   // Allows requests from any domain (e.g., localhost:3000, yoursite.com)
+              .AllowAnyMethod()   // Allows GET, POST, PUT, DELETE, etc.
+              .AllowAnyHeader();  // Allows any headers like Content-Type or Authorization
+    });
+});
+
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -92,7 +104,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.UseAuthentication();
-
+app.UseCors("AllowAll");
 app.MapControllers();
 
 app.Run();
