@@ -32,4 +32,14 @@ namespace MyApiProject.contracts
         [MaxLength(4)] 
         public string CreditCardLastFour { get; set; } = string.Empty;
     }
+
+
+    public class CustomerDto
+{
+    public int CustomerId { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Email { get; set; }
+    // NOTE: No "List<OrderDto> Orders" here! This breaks the loop.
+}
 }

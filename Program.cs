@@ -9,6 +9,13 @@ using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAutoMapper(cfg => 
+{
+    cfg.AddProfile<MappingProfile>();
+});
+
+
 var configuration = builder.Configuration;
 
 // Add services to the container.

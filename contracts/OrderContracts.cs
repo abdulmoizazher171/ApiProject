@@ -18,4 +18,16 @@ namespace MyApiProject.contracts
         // The date is often generated on the server, but can be included if required
         public DateTime? OrderDate { get; set; }
     }
+
+    public class OrderDto
+{
+    public int OrderId { get; set; }
+    public DateTime OrderDate { get; set; }
+    
+    // Instead of the DB Entity, we use the DTOs
+    public ProductDto Product { get; set; }
+    public CustomerDto Customer { get; set; }
+}
+
+
 }

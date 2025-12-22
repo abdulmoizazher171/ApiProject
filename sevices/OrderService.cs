@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using MyApiProject.contracts;
 using MyApiProject.Data;
 using MyApiProject.Models;
+using AutoMapper;
 
 namespace MyApiProject.Services;
 
@@ -13,14 +14,16 @@ class OrderService : IOrderInterface
 {
 
     private readonly ApplicationDbContext _context;
+    private readonly IMapper _mapper;
 
-    public OrderService(ApplicationDbContext context)
+    public OrderService(IMapper mapper ,ApplicationDbContext context  )
     {
         _context = context;
+        _mapper = mapper;
     }
 
 
-    public async Task<Order> Create(OrderCreateDto orderDto)
+    public async Task<OrderDto> Create(OrderCreateDto orderDto)
     {
         // 1. Map DTO to Entity
         var productExists = await _context.Product
@@ -80,20 +83,29 @@ class OrderService : IOrderInterface
             throw new InvalidOperationException($"Failed to retrieve order with ID {newOrder.OrderId} after creation.");
         }
 
-        return fullOrder;
+        var response = _mapper.Map<OrderDto>(fullOrder);
+
+    // 3. Return the clean DTO
+        return response;
     }
 
 
-    public async Task<List<Order>> GetAllOrdersAsync()
+    public async Task<List<OrderDto>> GetAllOrdersAsync()
     {
         List<Order> orders = new List<Order>();
         await _context.Orders.ToListAsync();
-        return await _context.Orders
+        orders =  await _context.Orders
         .Include(o => o.Product)           // Loads Product for each Order
              // Loads Category for each Product (Deep Load)
         .Include(o => o.Customer)          // Loads Customer for each Order
         .Include(o => o.Payment)           // Loads Payment for each Order
         .ToListAsync();
+
+       var orderDtos = _mapper.Map<List<OrderDto>>(orders);
+       
+
+    // 3. Return the clean DTO
+        return orderDtos;
        
     }
 }
