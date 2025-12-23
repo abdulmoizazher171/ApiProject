@@ -50,7 +50,7 @@ public class CustomerController : ControllerBase
     }
     
      [HttpGet("all")]
-    public async Task<List<Customer>> getll()
+    public async Task<List<CustomerDto>> getll()
     {
         return await _CustomerService.getall();
     }

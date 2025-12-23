@@ -6,6 +6,7 @@ using MyApiProject.Models;
 
 
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 
 namespace MyApiProject.Services;
@@ -16,9 +17,11 @@ public class CustomerSevice : ICustomerInterface
     
     private readonly ApplicationDbContext _context;
     
-    public CustomerSevice(ApplicationDbContext context)
+    private readonly IMapper _mapper;
+    public CustomerSevice( IMapper mapper , ApplicationDbContext context )
     {
         _context = context;
+        _mapper = mapper;
     }
 
     public async Task<Customer> addcustomer (CustomerCreateDto customerDto)
@@ -90,9 +93,11 @@ public class CustomerSevice : ICustomerInterface
             return fullPayment;
         }
 
-         public async Task<List<Customer>> getall()
+         public async Task<List<CustomerDto>> getall()
     {
-        return await _context.Customer.ToListAsync();
+        List<Customer> customers = await _context.Customer.ToListAsync();
+        List<CustomerDto> response = _mapper.Map<List<CustomerDto>>(customers);
+       return response;
 
     }
 }
